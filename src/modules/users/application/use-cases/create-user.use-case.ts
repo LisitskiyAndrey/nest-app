@@ -1,8 +1,9 @@
 import { User } from '@/modules/users/domain/entities/user.entity'
+import { UserAlreadyExistsError } from '@/modules/users/domain/errors/user-already-exists.error'
 import type { UserRepository } from '@/modules/users/domain/repositories/user.repository'
 import { USER_REPOSITORY } from '@/modules/users/users.tokens'
 
-import { ConflictException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { randomUUID } from 'crypto'
 
 @Injectable()
@@ -12,14 +13,13 @@ export class CreateUserUseCase {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async execute(email: string, name: string): Promise<User> {
+  async execute(email: string, name: string, passwordHash: string): Promise<User> {
     const existing = await this.userRepository.findByEmail(email)
-
     if (existing) {
-      throw new ConflictException(`A user with email "${email}" already exists`)
+      throw new UserAlreadyExistsError(email)
     }
 
-    const user = new User(randomUUID(), email, name, new Date())
+    const user = new User(randomUUID(), email, name, passwordHash, new Date())
 
     return this.userRepository.create(user)
   }

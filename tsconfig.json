@@ -25,7 +25,7 @@
       "@/*": ["src/*"],
       "@/modules": ["src/modules/*"],
       "@/database": ["src/app/database/*"],
-      "@users/*": ["src/modules/users/*"],
+      "@users/*": ["src/modules/users/*"]
     }
   }
 }

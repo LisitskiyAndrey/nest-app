@@ -1,3 +1,14 @@
+packages:
+  - .
+
+allowBuilds:
+  '@nestjs/core': set this to true or false
+  '@prisma/engines': false
+  '@scarf/scarf': false
+  argon2: false
+  prisma: false
+  unrs-resolver: false
+
 ignoredBuiltDependencies:
   - '@nestjs/core'
   - '@prisma/engines'

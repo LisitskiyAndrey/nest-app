@@ -17,10 +17,10 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.7.0",
-  "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
+  "clientVersion": "7.8.0",
+  "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider               = \"prisma-client\"\n  output                 = \"../src/generated/prisma\"\n  moduleFormat           = \"cjs\"\n  generatedFileExtension = \"ts\"\n  importFileExtension    = \"js\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  name      String\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchema": "generator client {\n  provider               = \"prisma-client\"\n  output                 = \"../src/generated/prisma\"\n  moduleFormat           = \"cjs\"\n  generatedFileExtension = \"ts\"\n  importFileExtension    = \"js\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel RefreshSession {\n  id        String   @id @default(uuid())\n  userId    String\n  tokenHash String   @unique\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@index([userId])\n}\n\nmodel User {\n  id              String           @id @default(uuid())\n  email           String           @unique\n  name            String\n  passwordHash    String\n  createdAt       DateTime         @default(now())\n  refreshSessions RefreshSession[]\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -32,10 +32,10 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"RefreshSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tokenHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"RefreshSessionToUser\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshSessions\",\"kind\":\"object\",\"type\":\"RefreshSession\",\"relationName\":\"RefreshSessionToUser\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 config.parameterizationSchema = {
-  strings: JSON.parse("[\"where\",\"User.findUnique\",\"User.findUniqueOrThrow\",\"orderBy\",\"cursor\",\"User.findFirst\",\"User.findFirstOrThrow\",\"User.findMany\",\"data\",\"User.createOne\",\"User.createMany\",\"User.createManyAndReturn\",\"User.updateOne\",\"User.updateMany\",\"User.updateManyAndReturn\",\"create\",\"update\",\"User.upsertOne\",\"User.deleteOne\",\"User.deleteMany\",\"having\",\"_count\",\"_min\",\"_max\",\"User.groupBy\",\"User.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"email\",\"name\",\"createdAt\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"not\",\"contains\",\"startsWith\",\"endsWith\",\"set\"]"),
-  graph: "KQkQBxoAACIAMBsAAAQAEBwAACIAMB0BAAAAAR4BAAAAAR8BACMAISBAACQAIQEAAAABACABAAAAAQAgBxoAACIAMBsAAAQAEBwAACIAMB0BACMAIR4BACMAIR8BACMAISBAACQAIQADAAAABAAgAwAABQAwBAAAAQAgAwAAAAQAIAMAAAUAMAQAAAEAIAMAAAAEACADAAAFADAEAAABACAEHQEAAAABHgEAAAABHwEAAAABIEAAAAABAQgAAAkAIAQdAQAAAAEeAQAAAAEfAQAAAAEgQAAAAAEBCAAACwAwAQgAAAsAMAQdAQAoACEeAQAoACEfAQAoACEgQAApACECAAAAAQAgCAAADgAgBB0BACgAIR4BACgAIR8BACgAISBAACkAIQIAAAAEACAIAAAQACACAAAABAAgCAAAEAAgAwAAAAEAIA8AAAkAIBAAAA4AIAEAAAABACABAAAABAAgAxUAACUAIBYAACcAIBcAACYAIAcaAAAaADAbAAAXABAcAAAaADAdAQAbACEeAQAbACEfAQAbACEgQAAcACEDAAAABAAgAwAAFgAwFAAAFwAgAwAAAAQAIAMAAAUAMAQAAAEAIAcaAAAaADAbAAAXABAcAAAaADAdAQAbACEeAQAbACEfAQAbACEgQAAcACEOFQAAHgAgFgAAIQAgFwAAIQAgIQEAAAABIgEAAAAEIwEAAAAEJAEAAAABJQEAAAABJgEAAAABJwEAAAABKAEAIAAhKQEAAAABKgEAAAABKwEAAAABCxUAAB4AIBYAAB8AIBcAAB8AICFAAAAAASJAAAAABCNAAAAABCRAAAAAASVAAAAAASZAAAAAASdAAAAAAShAAB0AIQsVAAAeACAWAAAfACAXAAAfACAhQAAAAAEiQAAAAAQjQAAAAAQkQAAAAAElQAAAAAEmQAAAAAEnQAAAAAEoQAAdACEIIQIAAAABIgIAAAAEIwIAAAAEJAIAAAABJQIAAAABJgIAAAABJwIAAAABKAIAHgAhCCFAAAAAASJAAAAABCNAAAAABCRAAAAAASVAAAAAASZAAAAAASdAAAAAAShAAB8AIQ4VAAAeACAWAAAhACAXAAAhACAhAQAAAAEiAQAAAAQjAQAAAAQkAQAAAAElAQAAAAEmAQAAAAEnAQAAAAEoAQAgACEpAQAAAAEqAQAAAAErAQAAAAELIQEAAAABIgEAAAAEIwEAAAAEJAEAAAABJQEAAAABJgEAAAABJwEAAAABKAEAIQAhKQEAAAABKgEAAAABKwEAAAABBxoAACIAMBsAAAQAEBwAACIAMB0BACMAIR4BACMAIR8BACMAISBAACQAIQshAQAAAAEiAQAAAAQjAQAAAAQkAQAAAAElAQAAAAEmAQAAAAEnAQAAAAEoAQAhACEpAQAAAAEqAQAAAAErAQAAAAEIIUAAAAABIkAAAAAEI0AAAAAEJEAAAAABJUAAAAABJkAAAAABJ0AAAAABKEAAHwAhAAAAASwBAAAAAQEsQAAAAAEAAAAAAxUABhYABxcACAAAAAMVAAYWAAcXAAgBAgECAwEFBgEGBwEHCAEJCgEKDAILDQMMDwENEQIOEgQREwESFAETFQIYGAUZGQk"
+  strings: JSON.parse("[\"where\",\"orderBy\",\"cursor\",\"refreshSessions\",\"_count\",\"user\",\"RefreshSession.findUnique\",\"RefreshSession.findUniqueOrThrow\",\"RefreshSession.findFirst\",\"RefreshSession.findFirstOrThrow\",\"RefreshSession.findMany\",\"data\",\"RefreshSession.createOne\",\"RefreshSession.createMany\",\"RefreshSession.createManyAndReturn\",\"RefreshSession.updateOne\",\"RefreshSession.updateMany\",\"RefreshSession.updateManyAndReturn\",\"create\",\"update\",\"RefreshSession.upsertOne\",\"RefreshSession.deleteOne\",\"RefreshSession.deleteMany\",\"having\",\"_min\",\"_max\",\"RefreshSession.groupBy\",\"RefreshSession.aggregate\",\"User.findUnique\",\"User.findUniqueOrThrow\",\"User.findFirst\",\"User.findFirstOrThrow\",\"User.findMany\",\"User.createOne\",\"User.createMany\",\"User.createManyAndReturn\",\"User.updateOne\",\"User.updateMany\",\"User.updateManyAndReturn\",\"User.upsertOne\",\"User.deleteOne\",\"User.deleteMany\",\"User.groupBy\",\"User.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"email\",\"name\",\"passwordHash\",\"createdAt\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"not\",\"contains\",\"startsWith\",\"endsWith\",\"every\",\"some\",\"none\",\"userId\",\"tokenHash\",\"expiresAt\",\"is\",\"isNot\",\"connectOrCreate\",\"upsert\",\"createMany\",\"set\",\"disconnect\",\"delete\",\"connect\",\"updateMany\",\"deleteMany\"]"),
+  graph: "YxIgCQUAAEMAICwAAEIAMC0AAAMAEC4AAEIAMC8BAAAAATNAAD8AIUIBAD4AIUMBAAAAAURAAD8AIQEAAAABACAJBQAAQwAgLAAAQgAwLQAAAwAQLgAAQgAwLwEAPgAhM0AAPwAhQgEAPgAhQwEAPgAhREAAPwAhAQUAAF0AIAMAAAADACABAAAEADACAAABACABAAAAAwAgAQAAAAEAIAMAAAADACABAAAEADACAAABACADAAAAAwAgAQAABAAwAgAAAQAgAwAAAAMAIAEAAAQAMAIAAAEAIAYFAABcACAvAQAAAAEzQAAAAAFCAQAAAAFDAQAAAAFEQAAAAAEBCwAACwAgBS8BAAAAATNAAAAAAUIBAAAAAUMBAAAAAURAAAAAAQELAAANADABCwAADQAwBgUAAFsAIC8BAEcAITNAAEgAIUIBAEcAIUMBAEcAIURAAEgAIQIAAAABACALAAAQACAFLwEARwAhM0AASAAhQgEARwAhQwEARwAhREAASAAhAgAAAAMAIAsAABIAIAIAAAADACALAAASACADAAAAAQAgEgAACwAgEwAAEAAgAQAAAAEAIAEAAAADACADBAAAWAAgGAAAWgAgGQAAWQAgCCwAAEEAMC0AABkAEC4AAEEAMC8BADYAITNAADcAIUIBADYAIUMBADYAIURAADcAIQMAAAADACABAAAYADAXAAAZACADAAAAAwAgAQAABAAwAgAAAQAgCQMAAEAAICwAAD0AMC0AAB8AEC4AAD0AMC8BAAAAATABAAAAATEBAD4AITIBAD4AITNAAD8AIQEAAAAcACABAAAAHAAgCQMAAEAAICwAAD0AMC0AAB8AEC4AAD0AMC8BAD4AITABAD4AITEBAD4AITIBAD4AITNAAD8AIQEDAABXACADAAAAHwAgAQAAIAAwAgAAHAAgAwAAAB8AIAEAACAAMAIAABwAIAMAAAAfACABAAAgADACAAAcACAGAwAAVgAgLwEAAAABMAEAAAABMQEAAAABMgEAAAABM0AAAAABAQsAACQAIAUvAQAAAAEwAQAAAAExAQAAAAEyAQAAAAEzQAAAAAEBCwAAJgAwAQsAACYAMAYDAABJACAvAQBHACEwAQBHACExAQBHACEyAQBHACEzQABIACECAAAAHAAgCwAAKQAgBS8BAEcAITABAEcAITEBAEcAITIB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"
 }
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
@@ -70,8 +70,8 @@ export interface PrismaClientConstructor {
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Users
-   * const users = await prisma.user.findMany()
+   * // Fetch zero or more RefreshSessions
+   * const refreshSessions = await prisma.refreshSession.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -94,8 +94,8 @@ export interface PrismaClientConstructor {
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more RefreshSessions
+ * const refreshSessions = await prisma.refreshSession.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -180,7 +180,7 @@ export interface PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => runtime.Types.Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<R>
 
@@ -189,6 +189,16 @@ export interface PrismaClient<
   }>>
 
       /**
+   * `prisma.refreshSession`: Exposes CRUD operations for the **RefreshSession** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RefreshSessions
+    * const refreshSessions = await prisma.refreshSession.findMany()
+    * ```
+    */
+  get refreshSession(): Prisma.RefreshSessionDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
     * Example usage:
     * ```ts
