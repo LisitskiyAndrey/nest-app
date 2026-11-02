@@ -1,122 +1,44 @@
-# CLAUDE.md
+# my-nest-app
 
-## Project context
+NestJS 11 REST API: TypeScript, Prisma 7/PostgreSQL, Passport/JWT, Argon2, Swagger, Jest/Supertest.
+Scope: auth, refresh sessions and users. Use pnpm; inspect current scripts and neighboring code first.
 
-This project is a backend application built with TypeScript and NestJS.
+## Architecture
 
-The architecture is hybrid:
+- Modules: `src/modules/auth` and `src/modules/users`; shared infrastructure: `src/app`, shared types: `src/shared`.
+- Keep controllers thin; HTTP DTOs/validation/Swagger in presentation, orchestration in application, persistence/security adapters in infrastructure.
+- Keep domain independent of NestJS, Prisma, HTTP and environment access; preserve existing Nest DI in application classes.
+- Use existing ports/tokens and module bindings; never access Prisma from controllers or use cases.
+- Preserve API compatibility and local conventions; avoid unrelated refactors, dependencies and compiler/config changes.
 
-- top level organization is feature-first
-- each feature is internally split into:
-  - domain
-  - application
-  - infrastructure
-  - presentation
+## Safety and data
 
-Claude must preserve these boundaries in every code change.
+- Never read or expose `.env` values without explicit need and approval; never commit secrets or log credentials/tokens.
+- Use Argon2 through the password-hasher port; store only refresh-token hashes and rotate refresh sessions.
+- Preserve authentication, authorization, validation, throttling, Helmet and CORS; sanitize responses and errors.
+- Schema: `prisma/schema.prisma`; migrations: `prisma/migrations`; never hand-edit `src/generated/prisma` or applied migrations.
+- No database reset/truncation, destructive Git commands, migration application, service startup or deployment without explicit authorization.
+- Preserve staged/unstaged work; no automatic commits, pushes, whole-repository formatting or unrelated lockfile changes.
 
-The goal is not only to make the code work, but to keep the codebase maintainable, predictable, testable, and easy to evolve.
+## Workflow
 
----
+- Read the affected code, tests and relevant references below before editing; implement the smallest coherent change with essential tests.
+- Use `/nest-feature`, `/nest-bug`, `/nest-quick`, `/nest-plan`, `/nest-review` or `/nest-verify` for the corresponding workflow.
+- The main session coordinates named subagents; pass scope, criteria, file ownership and prior results explicitly.
+- One writer at a time; parallelize only independent read-only analysis. Review stable diffs; allow at most two correction rounds.
+- Follow [coordination](.claude/workflows/coordination.md) when delegating; stop dependent work on unresolved decisions.
 
-## Core principles
+## Verification and completion
 
-1. Prefer feature-first organization over technical-layer-first organization.
+- Run focused tests first, then applicable `pnpm run test --runInBand`, `pnpm run test:e2e --runInBand`, `pnpm run lint`, `pnpm run format:check`, `pnpm run build`.
+- Use existing installed tools; no automatic installs or autofix. Build writes artifacts; respect runtime permissions.
+- For version-sensitive library APIs, use Context7 for the installed version; follow [.claude/references/mcp.md](.claude/references/mcp.md), disclose evidence gaps, and never send project code or secrets.
+- Current HTTP e2e mock Prisma; they do not prove PostgreSQL constraints, transactions or concurrent behavior.
+- Report changed files, implemented behavior, actual check results and unverified risks; never claim unrun checks passed.
 
-Good:
+## Read on demand
 
-- `src/modules/users/...`
-- `src/modules/payments/...`
-- `src/modules/auth/...`
-
-Bad:
-
-- `src/controllers/...`
-- `src/services/...`
-- `src/repositories/...` as global top-level buckets for the whole app
-
-2. Inside each feature, respect architectural boundaries:
-
-- `domain` contains business rules and pure domain logic
-- `application` contains use cases and orchestration
-- `infrastructure` contains persistence and external integrations
-- `presentation` contains HTTP transport layer concerns
-
-3. Always depend inward.
-
-Allowed dependency direction:
-
-- presentation -> application -> domain
-- infrastructure -> domain
-- infrastructure may be used by application through interfaces/contracts
-- domain must not depend on NestJS, databases, HTTP, Prisma, TypeORM, queues, or third-party transport concerns
-
-4. Keep NestJS framework concerns out of domain logic whenever possible.
-
-5. Controllers must stay thin.
-   Controllers handle request/response mapping and delegate work to application layer use cases.
-
-6. Repositories are infrastructure concerns.
-   Do not put direct database access in controllers or in presentation layer.
-
-7. DTOs are transport models.
-   Do not use DTOs as domain entities.
-
-8. Favor explicit naming and explicit mappings over "magic".
-
-9. Prefer simple, obvious code over clever abstractions.
-
-10. Do not introduce cross-feature coupling without a clear reason.
-
----
-
-## Preferred project structure
-
-Use this structure as the default unless the current feature already follows a compatible variant:
-
-```txt
-src/
-  main.ts
-  app.module.ts
-
-  core/
-    config/
-    common/
-    database/
-    auth/
-    logger/
-
-  modules/
-    users/
-      domain/
-        entities/
-        value-objects/
-        services/
-        events/
-        repositories/
-      application/
-        use-cases/
-        commands/
-        queries/
-        dto/
-        mappers/
-      infrastructure/
-        persistence/
-        repositories/
-        adapters/
-      presentation/
-        http/
-          controllers/
-          dto/
-          presenters/
-        graphql/
-        message-patterns/
-      users.module.ts
-
-    payments/
-      domain/
-      application/
-      infrastructure/
-      presentation/
-      payments.module.ts
-```
+- Layout, check commands and test setup: [.claude/references/project.md](.claude/references/project.md).
+- Layer boundaries, ports, naming, TypeScript and persistence: [.claude/references/backend-design.md](.claude/references/backend-design.md).
+- Auth, tokens, DTOs, Swagger, errors and configuration: [.claude/references/api-security.md](.claude/references/api-security.md).
+- Workflow usage and role catalog: [.claude/README.md](.claude/README.md).
